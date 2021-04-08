@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://unpkg.com/video.js/dist/video-js.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.js"></script>
+  <script src="https://unpkg.com/video.js/dist/video.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .main {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+    }
+
+    .item {
+      width: 100%;
+    }
+
+    video {
+      object-fit: fill;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .close {
+      /* still bad on picking color */
+      background: #999;
+      color: #fff;
+      /* make a round button */
+      border-radius: 40px;
+      /* center text */
+      line-height: 40px;
+      text-align: center;
+      height: 40px;
+      width: 40px;
+      font-size: 28px;
+      padding: 1px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    /* use cross as close button */
+    .close::before {
+      content: "\2716";
+    }
+
+    /* place the button on top-right */
+    .close {
+      top: 50px;
+      right: 50px;
+      position: absolute;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: #fff;
+      z-index: 100;
+      display: none;
+    }
+
+    .content {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 999;
+    }
+
+    #left {
+      position: absolute;
+      width: 20%;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      background: #000;
+    }
+
+    #right {
+      position: absolute;
+      width: 20%;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+    }
+
+    #middle {
+      position: absolute;
+      left: 20%;
+      top: 0;
+      right: 20%;
+      bottom: 0;
+      background: #333;
+      overflow: hidden;
+    }
+
+    #middle video {
+      display: block;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main" id="main">
+    <div id="left"></div>
+    <div id="middle"></div>
+    <div id="right"></div>
+  </div>
+  <!-- <div id="modal" class="modal">
+    <div id="close" class="close"></div>
+    <div id="content" class="content"></div>
+  </div> -->
+  <script>
+
+    var datas = [
+      { id: 1, src: 'https://blz-videos.nosdn.127.net/1/HearthStone/f6cd63b590d416821d3e27e0.mp4' },
+      { id: 2, src: 'http://vjs.zencdn.net/v/oceans.mp4' },
+      { id: 3, src: 'https://blz-videos.nosdn.127.net/1/HearthStone/f6cd63b590d416821d3e27e0.mp4' },
+      { id: 4, src: 'http://vjs.zencdn.net/v/oceans.mp4' },
+      { id: 5, src: 'https://blz-videos.nosdn.127.net/1/HearthStone/f6cd63b590d416821d3e27e0.mp4' },
+      { id: 6, src: 'http://vjs.zencdn.net/v/oceans.mp4' },
+      { id: 7, src: 'https://blz-videos.nosdn.127.net/1/HearthStone/f6cd63b590d416821d3e27e0.mp4' },
+      { id: 8, src: 'http://vjs.zencdn.net/v/oceans.mp4' },
+      { id: 9, src: 'https://blz-videos.nosdn.127.net/1/HearthStone/f6cd63b590d416821d3e27e0.mp4' },
+    ]
+    datas.forEach(function (item, index) {
+      var html = '<div class="item"><video id="example_video_' + item.id + '" class="video-js vjs-default-skin vjs-16-9" controls preload="none" data-id="' + item.id + '"'
+        + 'poster="http://vjs.zencdn.net/v/oceans.png">'
+        + '<source src="' + item.src + '" type="video/mp4">'
+        + '</video></div>'
+      if (index < 3) {
+        $("#left").append(html)
+        window['player_' + item.id] = videojs('example_video_' + item.id, {
+          muted: true,
+          controls: false,
+          height: 300,
+          width: 'auto',
+          loop: true,
+          autoplay: true,
+        });
+      }
+      if (index >= 3 && index < 6) {
+        $("#right").append(html)
+        window['player_' + item.id] = videojs('example_video_' + item.id, {
+          muted: true,
+          controls: false,
+          height: 300,
+          width: 'auto',
+          loop: true,
+          autoplay: true,
+        });
+      }
+      // var player1 = videojs('example_video_' + item.id, {
+      //   muted: true,
+      //   controls: false,
+      //   height: 300,
+      //   width: 'auto',
+      //   loop: true,
+      //   autoplay: true,
+      // });
+    })
+
+    var videoId = "example_video_" + Math.random()
+    var player;
+
+    $('#main div').on('click', '.item .video-js', function () {
+      var id = $(this).attr('data-id')
+      var currentTime = window['player_' + id].currentTime().toFixed(1)
+      var src = datas[id * 1 - 1].src
+      var html = '<video id="example_video_100" class="video-js vjs-default-skin vjs-16-9" controls preload="none"'
+        + 'poster="http://vjs.zencdn.net/v/oceans.png">'
+        + '<source src="' + src + '" type="video/mp4">'
+        + '</video>'
+      $("#middle").html(html)
+      if (player)
+        player.dispose()
+      // $("#modal").show()
+      player = videojs('example_video_100', {
+        // muted: true,
+        controls: true,
+        // height: 'auto',
+        // width: 'auto',
+        loop: true,
+        autoplay: true,
+      });
+      player && (player.currentTime(currentTime))
+    })
+
+    $("#close").click(function () {
+      $("#content").html('')
+      $("#modal").hide()
+      player.dispose()
+    })
+  </script>
+</body>
+
+</html>
